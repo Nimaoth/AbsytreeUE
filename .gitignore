@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+*.pdb
+
+# Unreal stup
+Intermediate
+Binaries
+*.exp

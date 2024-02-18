@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1",
+	"FriendlyName": "AbsytreeUE",
+	"Description": "Absytree editor embedded in the unreal engine",
+	"Category": "Other",
+	"CreatedBy": "Nico Otremba",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "AbsytreeUE",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
