@@ -13,7 +13,7 @@ class ABSYTREEUE_API UAbsytreeUESettings : public UObject
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(Config, EditAnywhere, Category = "Absytree", meta = (FilePathFilter = "*.dll|*.so"))
+	UPROPERTY(Config, EditAnywhere, Category = "Absytree", meta = (FilePathFilter = "Dynamic Library (*.dll, *.so)|*.dll;*.so"))
 	FFilePath DllPath = {"D:/Absytree/ast.dll"};
 
 	/** How often to poll absytree (necessary for async stuff). */
