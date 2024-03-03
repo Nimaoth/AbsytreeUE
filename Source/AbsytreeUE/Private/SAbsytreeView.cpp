@@ -1,7 +1,6 @@
 ﻿#include "SAbsytreeView.h"
 
-#include "AbsytreeUE.h"
-#include "AbsytreeUEStyle.h"
+#include "EditorWrapper.h"
 
 struct FPaintContext
 {
@@ -15,7 +14,7 @@ struct FPaintContext
 
 FPaintContext GPaintContext;
 
-extern "C" ABSYTREEUE_API void UnrealDrawRect(float X, float Y, float Width, float Height, float R, float G, float B, float A)
+extern "C" void UnrealDrawRect(float X, float Y, float Width, float Height, float R, float G, float B, float A)
 {
 	if (!GPaintContext.OutDrawElements)
 	{
@@ -32,7 +31,7 @@ extern "C" ABSYTREEUE_API void UnrealDrawRect(float X, float Y, float Width, flo
 		FColor(R * 255, G * 255, B * 255, A * 255));
 }
 
-extern "C" ABSYTREEUE_API void UnrealDrawText(float X, float Y, float R, float G, float B, float A, const char* Text)
+extern "C" void UnrealDrawText(float X, float Y, float R, float G, float B, float A, const char* Text)
 {
 	if (!GPaintContext.OutDrawElements)
 	{
@@ -51,7 +50,7 @@ extern "C" ABSYTREEUE_API void UnrealDrawText(float X, float Y, float R, float G
 	);
 }
 
-extern "C" ABSYTREEUE_API void UnrealPushClipRect(float X, float Y, float Width, float Height)
+extern "C" void UnrealPushClipRect(float X, float Y, float Width, float Height)
 {
 	if (!GPaintContext.OutDrawElements)
 	{
@@ -61,7 +60,7 @@ extern "C" ABSYTREEUE_API void UnrealPushClipRect(float X, float Y, float Width,
 	GPaintContext.OutDrawElements->PushClip(FSlateClippingZone(FSlateRect(Position.X, Position.Y, Position.X + Width, Position.Y + Height)));
 }
 
-extern "C" ABSYTREEUE_API void UnrealPopClipRect()
+extern "C" void UnrealPopClipRect()
 {
 	if (!GPaintContext.OutDrawElements)
 	{
@@ -73,15 +72,12 @@ extern "C" ABSYTREEUE_API void UnrealPopClipRect()
 
 void SAbsytreeView::Construct(const FArguments& InArgs)
 {
+	EditorWrapper = InArgs._EditorWrapper;
 	ChildSlot
 	[
 		SNew(SOverlay)
 		.Visibility(EVisibility::SelfHitTestInvisible)
 	];
-}
-
-SAbsytreeView::~SAbsytreeView()
-{
 }
 
 int32 SAbsytreeView::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect,
@@ -90,7 +86,7 @@ int32 SAbsytreeView::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGe
 {
 	const FSlateFontInfo Font = FCoreStyle::GetDefaultFontStyle("Mono", 12);
 	// const FSlateBrush* Brush = FAbsytreeUEStyle::Get().GetBrush("WhiteBrush");
-	FSlateColorBrush Brush(FLinearColor::White);
+	const FSlateColorBrush Brush(FLinearColor::White);
 
 
 	GPaintContext.AllottedGeometry = &AllottedGeometry;
@@ -100,7 +96,10 @@ int32 SAbsytreeView::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGe
 	GPaintContext.Font = &Font;
 	GPaintContext.Brush = &Brush;
 
-	GAbsytreeUEModule->HandlePaintAbsytree(AllottedGeometry.Size.X, AllottedGeometry.Size.Y);
+	if (EditorWrapper)
+	{
+		EditorWrapper->HandlePaintAbsytree(AllottedGeometry.Size.X, AllottedGeometry.Size.Y, UnrealDrawRect, UnrealDrawText, UnrealPushClipRect, UnrealPopClipRect);
+	}
 
 	GPaintContext.AllottedGeometry = nullptr;
 	GPaintContext.MyCullingRect = nullptr;
@@ -121,16 +120,11 @@ FVector2D SAbsytreeView::ComputeDesiredSize(float X) const
 void SAbsytreeView::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
 {
 	SCompoundWidget::Tick(AllottedGeometry, InCurrentTime, InDeltaTime);
-
-	if (GPollAbsytree)
-	{
-		GPollAbsytree(1);
-	}
 }
 
 FReply SAbsytreeView::OnMouseWheel(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	if (GAbsytreeUEModule && GAbsytreeUEModule->HandleMouseWheel(MyGeometry,  MouseEvent))
+	if (EditorWrapper && EditorWrapper->HandleMouseWheel(MyGeometry,  MouseEvent))
 		return FReply::Handled();
 	return SCompoundWidget::OnMouseWheel(MyGeometry, MouseEvent);
 }
@@ -138,7 +132,7 @@ FReply SAbsytreeView::OnMouseWheel(const FGeometry& MyGeometry, const FPointerEv
 FReply SAbsytreeView::OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
 	FSlateApplication::Get().SetKeyboardFocus(AsShared(), EFocusCause::Mouse);
-	if (GAbsytreeUEModule && GAbsytreeUEModule->HandleMouseButtonDown(MyGeometry,  MouseEvent))
+	if (EditorWrapper && EditorWrapper->HandleMouseButtonDown(MyGeometry,  MouseEvent))
 		return FReply::Handled();
 
 	return SCompoundWidget::OnMouseButtonDown(MyGeometry, MouseEvent);
@@ -146,42 +140,42 @@ FReply SAbsytreeView::OnMouseButtonDown(const FGeometry& MyGeometry, const FPoin
 
 FReply SAbsytreeView::OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	if (GAbsytreeUEModule && GAbsytreeUEModule->HandleMouseButtonUp(MyGeometry,  MouseEvent))
+	if (EditorWrapper && EditorWrapper->HandleMouseButtonUp(MyGeometry,  MouseEvent))
 		return FReply::Handled();
 	return SCompoundWidget::OnMouseButtonUp(MyGeometry, MouseEvent);
 }
 
 FReply SAbsytreeView::OnMouseButtonDoubleClick(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	if (GAbsytreeUEModule && GAbsytreeUEModule->HandleMouseDoubleClick(MyGeometry,  MouseEvent))
+	if (EditorWrapper && EditorWrapper->HandleMouseDoubleClick(MyGeometry,  MouseEvent))
 		return FReply::Handled();
 	return SCompoundWidget::OnMouseButtonDoubleClick(MyGeometry, MouseEvent);
 }
 
 FReply SAbsytreeView::OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
-	if (GAbsytreeUEModule && GAbsytreeUEModule->HandleMouseMoved(MyGeometry,  MouseEvent))
+	if (EditorWrapper && EditorWrapper->HandleMouseMoved(MyGeometry,  MouseEvent))
 		return FReply::Handled();
 	return SCompoundWidget::OnMouseMove(MyGeometry, MouseEvent);
 }
 
 FReply SAbsytreeView::OnKeyChar(const FGeometry& MyGeometry, const FCharacterEvent& InCharacterEvent)
 {
-	if (GAbsytreeUEModule && GAbsytreeUEModule->HandleKeyChar(InCharacterEvent))
+	if (EditorWrapper && EditorWrapper->HandleKeyChar(InCharacterEvent))
 		return FReply::Handled();
 	return SCompoundWidget::OnKeyChar(MyGeometry, InCharacterEvent);
 }
 
 FReply SAbsytreeView::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
 {
-	if (GAbsytreeUEModule && GAbsytreeUEModule->HandleKeyDown(InKeyEvent))
+	if (EditorWrapper && EditorWrapper->HandleKeyDown(InKeyEvent))
 		return FReply::Handled();
 	return SCompoundWidget::OnKeyDown(MyGeometry, InKeyEvent);
 }
 
 FReply SAbsytreeView::OnKeyUp(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
 {
-	if (GAbsytreeUEModule && GAbsytreeUEModule->HandleKeyUp(InKeyEvent))
+	if (EditorWrapper && EditorWrapper->HandleKeyUp(InKeyEvent))
 		return FReply::Handled();
 	return SCompoundWidget::OnKeyUp(MyGeometry, InKeyEvent);
 }
