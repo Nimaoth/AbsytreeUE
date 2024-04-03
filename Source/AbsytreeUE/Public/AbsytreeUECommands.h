@@ -9,16 +9,16 @@
 class FAbsytreeUECommands : public TCommands<FAbsytreeUECommands>
 {
 public:
-	FAbsytreeUECommands()
-		: TCommands<FAbsytreeUECommands>(TEXT("AbsytreeUE"), NSLOCTEXT("Contexts", "AbsytreeUE", "AbsytreeUE Plugin"),
-		                                 NAME_None, FAbsytreeUEStyle::GetStyleSetName())
-	{
-	}
+    FAbsytreeUECommands()
+        : TCommands<FAbsytreeUECommands>(TEXT("AbsytreeUE"), NSLOCTEXT("Contexts", "AbsytreeUE", "AbsytreeUE Plugin"),
+                                         NAME_None, FAbsytreeUEStyle::GetStyleSetName())
+    {
+    }
 
-	// TCommands<> interface
-	virtual void RegisterCommands() override;
+    // TCommands<> interface
+    virtual void RegisterCommands() override;
 
 public:
-	TSharedPtr<FUICommandInfo> OpenPluginWindow;
-	TSharedPtr<FUICommandInfo> ReloadDll;
+    TSharedPtr<FUICommandInfo> OpenPluginWindow;
+    TSharedPtr<FUICommandInfo> ReloadDll;
 };

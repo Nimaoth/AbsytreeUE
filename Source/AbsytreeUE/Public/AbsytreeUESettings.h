@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
@@ -10,17 +10,17 @@
 UCLASS(config = "Absytree")
 class ABSYTREEUE_API UAbsytreeUESettings : public UObject
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	UPROPERTY(Config, EditAnywhere, Category = "Absytree", meta = (FilePathFilter = "Dynamic Library (*.dll, *.so)|*.dll;*.so"))
-	FFilePath DllPath = {"D:/Absytree/ast.dll"};
+    UPROPERTY(Config, EditAnywhere, Category = "Absytree", meta = (FilePathFilter = "Dynamic Library (*.dll, *.so)|*.dll;*.so"))
+    FFilePath DllPath = {"D:/Absytree/ast.dll"};
 
-	/** How often to poll absytree (necessary for async stuff). */
-	UPROPERTY(Config, EditAnywhere, Category = "Absytree", meta = (Units = "s"))
-	float PollInterval = 0.25f;
+    /** How often to poll absytree (necessary for async stuff). */
+    UPROPERTY(Config, EditAnywhere, Category = "Absytree", meta = (Units = "s"))
+    float PollInterval = 0.25f;
 
-	/** Timeout for polling absytree. */
-	UPROPERTY(Config, EditAnywhere, Category = "Absytree", meta = (Units = "ms"))
-	float PollTimeoutMs = 10;
+    /** Timeout for polling absytree. */
+    UPROPERTY(Config, EditAnywhere, Category = "Absytree", meta = (Units = "ms"))
+    float PollTimeoutMs = 10;
 };
