@@ -1,6 +1,7 @@
 #include "SAbsytreeView.h"
 
 #include "EditorWrapper.h"
+#include "HAL/Platform.h"
 #include "Styling/CoreStyle.h"
 #include "Brushes/SlateColorBrush.h"
 #include "Framework/Application/SlateApplication.h"
@@ -34,7 +35,7 @@ extern "C" void UnrealDrawRect(float X, float Y, float Width, float Height, floa
         FColor(R * 255, G * 255, B * 255, A * 255));
 }
 
-extern "C" void UnrealDrawText(float X, float Y, float R, float G, float B, float A, const char* Text)
+extern "C" void UnrealDrawText(float X, float Y, float R, float G, float B, float A, const UTF8CHAR* Text)
 {
     if (!GPaintContext.OutDrawElements)
     {

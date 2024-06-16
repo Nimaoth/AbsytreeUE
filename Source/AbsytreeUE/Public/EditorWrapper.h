@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "HAL/Platform.h"
 #include "Input/Events.h"
 #include "Layout/Geometry.h"
 #include "UObject/SoftObjectPath.h"
@@ -8,7 +9,7 @@
 using AbsytreeApp = struct{};
 
 using DrawRectFn = void(*)(float X, float Y, float Width, float Height, float R, float G, float B, float A);
-using DrawTextFn = void(*)(float X, float Y, float R, float G, float B, float A, const char* Text);
+using DrawTextFn = void(*)(float X, float Y, float R, float G, float B, float A, const UTF8CHAR* Text);
 using PushClipRectFn = void(*)(float X, float Y, float Width, float Height);
 using PopClipRectFn = void(*)();
 
